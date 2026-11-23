@@ -1,42 +1,40 @@
-
 import { Suspense } from 'react'
-import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import MembersSection from './dashboard/MembersSection'
 import MembersTable from './dashboard/MembersTable'
+import { supabase } from '@/lib/supabase'
 
 async function DashboardContent() {
-  const { data: members, error } = await supabase
-    .from('end_users')
-    .select('id, full_name, phone, created_at, amount_paid, payment_method')
-    .order('created_at', { ascending: false })
+  const { data: members, error } = await supabase.from('members').select('*')
 
   if (error) {
-    console.error('Error cargando socios:', error.message)
+    return (
+      <div className="rounded-lg border p-4 text-sm">
+        Error cargando datos: {error.message}
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6 md:p-10">
-      <header className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Aura Systems Dashboard</h1>
-          <p className="text-sm text-zinc-400">Control de socios y operaciones</p>
-        </div>
-      </header>
-
-      <main className="space-y-8">
-        <MembersSection />
-        <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 shadow-xl">
-          <h2 className="text-lg font-semibold mb-4">Registros Recientes</h2>
-          <Suspense fallback={<p className="text-zinc-500">Cargando datos...</p>}>
-            <MembersTable members={members || []} />
-          </Suspense>
-        </div>
-      </main>
-    </div>
+    <>
+      <MembersSection members={members ?? []} />
+      <MembersTable members={members ?? []} />
+    </>
   )
 }
 
-export default function Page() {
-  return <DashboardContent />
+export default function HomePage() {
+  return (
+    <main className="mx-auto max-w-5xl p-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Aura Systems Dashboard</h1>
+        <Link href="/dashboard" className="text-sm underline">
+          Dashboard
+        </Link>
+      </div>
+      <Suspense fallback={<div className="p-4 text-sm opacity-70">Cargando dashboard...</div>}>
+        <DashboardContent />
+      </Suspense>
+    </main>
+  )
 }
