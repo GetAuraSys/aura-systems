@@ -8,22 +8,24 @@ export default function MembersTable({ members }: { members?: any[] }) {
       <table className="min-w-full text-left text-sm">
         <thead>
           <tr className="border-b">
-            <th className="p-3">ID</th>
-            <th className="p-3">Details</th>
+            <th className="p-3">Nombre</th>
+            <th className="p-3">Correo</th>
+            <th className="p-3">Estado</th>
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td className="p-3 opacity-70" colSpan={2}>
-                No members found.
+              <td className="p-3 opacity-70" colSpan={3}>
+                Sin registros todavía.
               </td>
             </tr>
           ) : (
             rows.map((item, idx) => (
               <tr key={item?.id ?? idx} className="border-b last:border-b-0">
-                <td className="p-3">{item?.id ?? idx + 1}</td>
-                <td className="p-3">{JSON.stringify(item)}</td>
+                <td className="p-3">{item?.name ?? '—'}</td>
+                <td className="p-3">{item?.email ?? '—'}</td>
+                <td className="p-3">{item?.status ?? '—'}</td>
               </tr>
             ))
           )}
