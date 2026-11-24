@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
+import AddMemberForm from './AddMemberForm'
 import MembersSection from './MembersSection'
 import MembersTable from './MembersTable'
 import { supabase } from '@/lib/supabase'
@@ -17,6 +18,7 @@ async function DashboardView() {
 
   return (
     <>
+      <AddMemberForm />
       <MembersSection members={members ?? []} />
       <MembersTable members={members ?? []} />
     </>
