@@ -24,7 +24,7 @@ export default function AddMemberForm() {
     const { error } = await supabase.from('members').insert([
       {
         name: name.trim(),
-        email: email.trim(),
+        email: email.trim() || null,
         phone: phone.trim() || null,
         business: business.trim() || null,
         status,
@@ -59,15 +59,14 @@ export default function AddMemberForm() {
         <input
           type="text"
           required
-          placeholder="Nombre"
+          placeholder="Nombre *"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           type="email"
-          required
-          placeholder="Correo"
+          placeholder="Correo (opcional)"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
