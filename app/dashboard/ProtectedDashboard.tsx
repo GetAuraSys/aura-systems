@@ -59,9 +59,9 @@ export default function ProtectedDashboard() {
 
   return (
     <>
-      <AddMemberForm />
+      <AddMemberForm onSuccess={loadMembers} />
       <MembersSection members={members} />
-      <MembersTable members={members} />
+      <MembersTable members={members} onMutate={loadMembers} />
     </>
   )
 }

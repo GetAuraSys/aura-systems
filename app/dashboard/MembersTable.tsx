@@ -4,7 +4,13 @@ import React, { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
-export default function MembersTable({ members }: { members?: any[] }) {
+export default function MembersTable({
+  members,
+  onMutate,
+}: {
+  members?: any[]
+  onMutate?: () => void | Promise<void>
+}) {
   const router = useRouter()
   const rows = Array.isArray(members) ? members : []
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -53,8 +59,8 @@ export default function MembersTable({ members }: { members?: any[] }) {
   }
 
   async function saveEdit(id: string) {
-    if (!editName.trim() || !editEmail.trim()) {
-      alert('Nombre y correo son obligatorios.')
+    if (!editName.trim()) {
+      alert('El nombre es obligatorio.')
       return
     }
 
@@ -63,7 +69,7 @@ export default function MembersTable({ members }: { members?: any[] }) {
       .from('members')
       .update({
         name: editName.trim(),
-        email: editEmail.trim(),
+        email: editEmail.trim() || null,
         phone: editPhone.trim() || null,
         business: editBusiness.trim() || null,
       })
@@ -76,6 +82,7 @@ export default function MembersTable({ members }: { members?: any[] }) {
     }
 
     setEditingId(null)
+    if (onMutate) await onMutate()
     router.refresh()
   }
 
@@ -94,6 +101,7 @@ export default function MembersTable({ members }: { members?: any[] }) {
       alert(`Error al actualizar: ${error.message}`)
       return
     }
+    if (onMutate) await onMutate()
     router.refresh()
   }
 
@@ -113,6 +121,7 @@ export default function MembersTable({ members }: { members?: any[] }) {
       alert(`Error al eliminar: ${error.message}`)
       return
     }
+    if (onMutate) await onMutate()
     router.refresh()
   }
 

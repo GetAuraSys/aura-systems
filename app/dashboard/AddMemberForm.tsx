@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
-export default function AddMemberForm() {
+export default function AddMemberForm({ onSuccess }: { onSuccess?: () => void | Promise<void> }) {
   const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -44,6 +44,7 @@ export default function AddMemberForm() {
     setBusiness('')
     setStatus('active')
     setMessage('Miembro guardado correctamente.')
+    if (onSuccess) await onSuccess()
     router.refresh()
   }
 
