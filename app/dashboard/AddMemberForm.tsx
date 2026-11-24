@@ -48,8 +48,13 @@ export default function AddMemberForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-lg border p-4">
-      <h2 className="mb-3 text-base font-semibold">Agregar miembro</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900/70 p-5"
+    >
+      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-zinc-300">
+        Registrar nuevo miembro
+      </h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <input
           type="text"
@@ -57,7 +62,7 @@ export default function AddMemberForm() {
           placeholder="Nombre"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           type="email"
@@ -65,41 +70,41 @@ export default function AddMemberForm() {
           placeholder="Correo"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           type="text"
           placeholder="Teléfono"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
         />
         <input
           type="text"
           placeholder="Negocio"
           value={business}
           onChange={(e) => setBusiness(e.target.value)}
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white placeholder-zinc-500 focus:border-white focus:outline-none"
         />
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="rounded border px-3 py-2 text-sm"
+          className="rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm text-white focus:border-white focus:outline-none"
         >
           <option value="active">Activo</option>
           <option value="inactive">Inactivo</option>
         </select>
       </div>
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="submit"
           disabled={loading}
-          className="rounded border px-4 py-2 text-sm font-medium"
+          className="rounded-lg bg-white px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-zinc-200 disabled:opacity-50"
         >
           {loading ? 'Guardando...' : 'Guardar miembro'}
         </button>
-        {message && <span className="text-sm">{message}</span>}
-        {errorMsg && <span className="text-sm">{errorMsg}</span>}
+        {message && <span className="text-sm text-emerald-400">{message}</span>}
+        {errorMsg && <span className="text-sm text-rose-400">{errorMsg}</span>}
       </div>
     </form>
   )
