@@ -6,7 +6,10 @@ import MembersTable from './MembersTable'
 import { supabase } from '@/lib/supabase'
 
 async function DashboardView() {
-  const { data: members, error } = await supabase.from('members').select('*')
+  const { data: members, error } = await supabase
+    .from('members')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   if (error) {
     return (
