@@ -11,6 +11,12 @@ export default function MembersTable({ members }: { members?: any[] }) {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
 
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [editEmail, setEditEmail] = useState('')
+  const [editPhone, setEditPhone] = useState('')
+  const [editBusiness, setEditBusiness] = useState('')
+
   const filteredRows = useMemo(() => {
     const q = search.trim().toLowerCase()
     return rows.filter((item) => {
@@ -32,6 +38,46 @@ export default function MembersTable({ members }: { members?: any[] }) {
       return haystack.includes(q)
     })
   }, [rows, search, statusFilter])
+
+  function startEdit(item: any) {
+    if (!item?.id) return
+    setEditingId(item.id)
+    setEditName(item.name ?? '')
+    setEditEmail(item.email ?? '')
+    setEditPhone(item.phone ?? '')
+    setEditBusiness(item.business ?? '')
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+  }
+
+  async function saveEdit(id: string) {
+    if (!editName.trim() || !editEmail.trim()) {
+      alert('Nombre y correo son obligatorios.')
+      return
+    }
+
+    setBusyId(id)
+    const { error } = await supabase
+      .from('members')
+      .update({
+        name: editName.trim(),
+        email: editEmail.trim(),
+        phone: editPhone.trim() || null,
+        business: editBusiness.trim() || null,
+      })
+      .eq('id', id)
+
+    setBusyId(null)
+    if (error) {
+      alert(`Error al guardar cambios: ${error.message}`)
+      return
+    }
+
+    setEditingId(null)
+    router.refresh()
+  }
 
   async function toggleStatus(item: any) {
     if (!item?.id) return
@@ -142,6 +188,80 @@ export default function MembersTable({ members }: { members?: any[] }) {
               filteredRows.map((item, idx) => {
                 const isActive = item?.status === 'active'
                 const isBusy = busyId === item?.id
+                const isEditing = editingId === item?.id
+
+                if (isEditing) {
+                  return (
+                    <tr key={item?.id ?? idx} className="bg-zinc-800/40">
+                      <td className="px-3 py-2.5">
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="w-full rounded border border-zinc-600 bg-zinc-950 px-2.5 py-1 text-xs text-white focus:border-white focus:outline-none"
+                        />
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <input
+                          type="email"
+                          value={editEmail}
+                          onChange={(e) => setEditEmail(e.target.value)}
+                          className="w-full rounded border border-zinc-600 bg-zinc-950 px-2.5 py-1 text-xs text-white focus:border-white focus:outline-none"
+                        />
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <input
+                          type="text"
+                          placeholder="Teléfono"
+                          value={editPhone}
+                          onChange={(e) => setEditPhone(e.target.value)}
+                          className="w-full rounded border border-zinc-600 bg-zinc-950 px-2.5 py-1 text-xs text-white focus:border-white focus:outline-none"
+                        />
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <input
+                          type="text"
+                          placeholder="Negocio"
+                          value={editBusiness}
+                          onChange={(e) => setEditBusiness(e.target.value)}
+                          className="w-full rounded border border-zinc-600 bg-zinc-950 px-2.5 py-1 text-xs text-white focus:border-white focus:outline-none"
+                        />
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            isActive
+                              ? 'bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30'
+                              : 'bg-zinc-700/40 text-zinc-300 ring-1 ring-zinc-600/40'
+                          }`}
+                        >
+                          {isActive ? 'Activo' : 'Inactivo'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="inline-flex items-center gap-2">
+                          <button
+                            type="button"
+                            disabled={isBusy}
+                            onClick={() => saveEdit(item.id)}
+                            className="rounded-md bg-white px-2.5 py-1 text-xs font-semibold text-zinc-950 transition hover:bg-zinc-200 disabled:opacity-50"
+                          >
+                            {isBusy ? 'Guardando...' : 'Guardar'}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={isBusy}
+                            onClick={cancelEdit}
+                            className="rounded-md border border-zinc-600 px-2.5 py-1 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                }
+
                 return (
                   <tr key={item?.id ?? idx} className="transition hover:bg-zinc-800/40">
                     <td className="px-4 py-3 font-medium text-white">
@@ -163,6 +283,14 @@ export default function MembersTable({ members }: { members?: any[] }) {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="inline-flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={isBusy}
+                          onClick={() => startEdit(item)}
+                          className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800 disabled:opacity-50"
+                        >
+                          Editar
+                        </button>
                         <button
                           type="button"
                           disabled={isBusy}
